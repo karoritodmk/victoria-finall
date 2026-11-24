@@ -108,6 +108,7 @@ export function VictoriaNavbar({
   const [tabs, setTabs] = useState<Tab[]>(TABS_APRENDIZ);
   const [noLeidas, setNoLeidas] = useState(0);
   const activeTabRef = useRef<View>(null);
+  const centralNavRef = useRef<View>(null);
 
   // En el rol COORDINADOR las pestañas inactivas muestran solo el icono; el
   // texto aparece únicamente en la pestaña de la pantalla actual.
@@ -150,6 +151,21 @@ export function VictoriaNavbar({
     };
   }, [showNotifs]);
 
+  // Tooltip nativo del navegador (el mismo globito que sale al pasar el cursor
+  // por los iconos de Chrome): al dejar el cursor sobre una pestaña aparece su
+  // nombre, útil sobre todo en el coordinador, donde las inactivas solo
+  // muestran el icono. Solo aplica en web; en celular no hay cursor.
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const contenedor = centralNavRef.current as unknown as HTMLElement | null;
+    if (!contenedor || typeof contenedor.querySelectorAll !== 'function') return;
+    const enlaces = contenedor.querySelectorAll('a');
+    enlaces.forEach((enlace, i) => {
+      const tab = tabs[i];
+      if (tab) enlace.setAttribute('title', tab.label);
+    });
+  }, [tabs]);
+
   // Mide en píxeles reales dónde quedó el tab activo (solo tiene sentido en
   // web, donde screen-shell dibuja la muesca con backdrop-filter). Se
   // recalcula al cambiar de pestaña y al redimensionar la ventana, así la
@@ -184,7 +200,7 @@ export function VictoriaNavbar({
         <Text style={styles.brandLetter}>V</Text>
       </View>
 
-      <View style={styles.centralNav}>
+      <View ref={centralNavRef as never} style={styles.centralNav}>
         {tabs.map((tab) => {
           // La pantalla de detalle de tarea (/victoria/tarea/[id]) es parte
           // del flujo de Competencias aunque su URL no lo diga, así que la
@@ -201,7 +217,7 @@ export function VictoriaNavbar({
               style={[styles.menuTabItem, active && styles.menuTabItemActive]}>
               <Ionicons
                 name={tab.icon}
-                size={15}
+                size={16}
                 color={active ? VictoriaColors.white : 'rgba(255,255,255,0.6)'}
               />
               {active || !soloIconosInactivos ? (
@@ -216,7 +232,7 @@ export function VictoriaNavbar({
 
       <View style={styles.profileActions}>
         <Pressable style={styles.actionCircle} onPress={() => setShowNotifs(true)}>
-          <Ionicons name="notifications-outline" size={18} color="rgba(255,255,255,0.85)" />
+          <Ionicons name="notifications-outline" size={19} color="rgba(255,255,255,0.85)" />
           {noLeidas > 0 ? (
             <View style={styles.notifBadge}>
               <Text style={styles.notifBadgeText}>{noLeidas > 9 ? '9+' : noLeidas}</Text>

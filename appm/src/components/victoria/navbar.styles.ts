@@ -46,14 +46,14 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 50,
+    paddingHorizontal: 19,
+    borderRadius: 58,
   },
   menuTabItemActive: {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
   },
   menuTabText: {
-    fontSize: 13,
+    fontSize: 15,
     color: 'rgba(255, 255, 255, 0.6)',
   },
   menuTabTextActive: {
